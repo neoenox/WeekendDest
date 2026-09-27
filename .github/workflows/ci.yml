@@ -27,15 +27,15 @@ jobs:
       - name: Prepare test database
         env:
           RAILS_ENV: test
-        run: bin/rails db:prepare
+        run: bundle exec rails db:prepare
 
       - name: Run Rails tests
         env:
           RAILS_ENV: test
-        run: bin/rails test
+        run: bundle exec rails test
 
       - name: Verify production assets compile
         env:
           RAILS_ENV: production
           SECRET_KEY_BASE_DUMMY: "1"
-        run: bin/rails assets:precompile
+        run: bundle exec rails assets:precompile
