@@ -37,5 +37,5 @@ jobs:
       - name: Verify production assets compile
         env:
           RAILS_ENV: production
-          SECRET_KEY_BASE_DUMMY: "1"
+          SECRET_KEY_BASE: "ci-assets-precompile-only-secret-key-base"
         run: bundle exec rails assets:precompile
