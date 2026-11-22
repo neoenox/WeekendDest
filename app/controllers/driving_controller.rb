@@ -42,7 +42,15 @@ class DrivingController < ApplicationController
     @srcdestMap = candidates.sample
     route_response = Api::GoogleRoute::Request.new.request([@srcdestMap])
     @result = route_response.fetch('result')
-    raise Api::GoogleRoute::Request::RequestError, 'route result is not an array' unless @result.is_a?(Array)
+    valid_routes = @result.is_a?(Array) && @result.all? do |route|
+      location = route.is_a?(Hash) ? route['location'] : nil
+      distance = route.is_a?(Hash) ? route['distance'] : nil
+      location.is_a?(Hash) && distance.is_a?(Hash) &&
+        location['src'].is_a?(String) && location['src'].present? &&
+        location['dest'].is_a?(String) && location['dest'].present? &&
+        distance['highway'].present? && distance['localway'].present?
+    end
+    raise Api::GoogleRoute::Request::RequestError, 'invalid route response structure' unless valid_routes
 
     render :list
   rescue Api::GoogleGeo::Request::RequestError, Api::GoogleRoute::Request::RequestError,
